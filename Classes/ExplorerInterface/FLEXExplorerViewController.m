@@ -447,8 +447,12 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 - (UIWindow *)statusWindow {
     if (!@available(iOS 16, *)) {
-        NSString *statusBarString = [NSString stringWithFormat:@"%@arWindow", @"_statusB"];
-        return [UIApplication.sharedApplication valueForKey:statusBarString];
+        @try {
+            NSString *statusBarString = [NSString stringWithFormat:@"%@arWindow", @"_statusB"];
+            return [UIApplication.sharedApplication valueForKey:statusBarString];
+        } @catch (NSException *exception) {
+            return nil;
+        }
     }
     
     return nil;
