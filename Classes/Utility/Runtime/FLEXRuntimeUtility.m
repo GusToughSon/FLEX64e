@@ -114,6 +114,9 @@ NSString * const FLEXRuntimeUtilityErrorDomain = @"FLEXRuntimeUtilityErrorDomain
     // Don't assume that we have an NSObject subclass; not all objects respond to -description
     if ([self safeObject:object respondsToSelector:@selector(description)]) {
         @try {
+            if ([object isKindOfClass:[NSAttributedString class]]) {
+                return [object string];
+            }
             return [object description];
         } @catch (NSException *exception) {
             return nil;
