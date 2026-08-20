@@ -53,10 +53,9 @@
                          rowIDs:(nullable NSArray<NSString *> *)rowIDs
                       tableName:(nullable NSString *)tableName
                        database:(nullable id<FLEXDatabaseManager>)databaseManager {
-    // Must supply all optional parameters as one, or none
-    BOOL all = rowIDs && tableName && databaseManager;
-    BOOL none = !rowIDs && !tableName && !databaseManager;
-    NSParameterAssert(all || none);
+    if (databaseManager) {
+        NSParameterAssert(tableName);
+    }
 
     self = [super init];
     if (self) {
@@ -176,8 +175,7 @@
             [self.navigationController pushViewController:focusedRow animated:YES];
         });
         
-        // Option to delete row
-        BOOL hasRowID = self.rows.count && row < self.rows.count;
+        BOOL hasRowID = self.rowIDs.count && row < self.rowIDs.count;
         if (hasRowID && self.canRefresh) {
             make.button(@"Delete").destructiveStyle().handler(^(NSArray<NSString *> *strings) {
                 NSString *deleteRow = [NSString stringWithFormat:
