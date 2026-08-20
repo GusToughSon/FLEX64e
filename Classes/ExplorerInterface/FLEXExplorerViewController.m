@@ -345,12 +345,16 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 }
 
 - (void)stopObservingView:(UIView *)view {
-    if (!view) {
+    if (!view || ![self.observedViews containsObject:view]) {
         return;
     }
     
     for (NSString *keyPath in self.viewKeyPathsToTrack) {
-        [view removeObserver:self forKeyPath:keyPath];
+        @try {
+            [view removeObserver:self forKeyPath:keyPath];
+        } @catch (NSException *exception) {
+            // Guard against removal issues
+        }
     }
     
     [self.observedViews removeObject:view];
