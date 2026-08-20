@@ -23,6 +23,9 @@
 
 #include "flex_fishhook.h"
 
+#if __arm64e__
+#include <ptrauth.h>
+#endif
 #include <dlfcn.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -146,11 +149,18 @@ static void flex_perform_rebinding_with_section(struct rebindings_entry *rebindi
                     
                     if (cur->rebindings[j].replaced != NULL &&
                       indirect_symbol_bindings[i] != cur->rebindings[j].replacement) {
-                        
+#if __arm64e__
+                        *(cur->rebindings[j].replaced) = ptrauth_sign_unauthenticated(ptrauth_strip(indirect_symbol_bindings[i], ptrauth_key_asia), ptrauth_key_asia, 0);
+#else
                         *(cur->rebindings[j].replaced) = indirect_symbol_bindings[i];
+#endif
                     }
                     
+#if __arm64e__
+                    indirect_symbol_bindings[i] = ptrauth_sign_unauthenticated(ptrauth_strip(cur->rebindings[j].replacement, ptrauth_key_asia), ptrauth_key_asia, &indirect_symbol_bindings[i]);
+#else
                     indirect_symbol_bindings[i] = cur->rebindings[j].replacement;
+#endif
                     goto symbol_loop;
                 }
             }
