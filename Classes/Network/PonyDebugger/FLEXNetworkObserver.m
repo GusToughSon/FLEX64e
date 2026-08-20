@@ -22,6 +22,7 @@
 #import "NSObject+FLEX_Reflection.h"
 #import "FLEXMethod.h"
 #import "Firestore.h"
+#import "FLEXRuntimeSafety.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
@@ -497,7 +498,12 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
             for (unsigned int classIndex = 0; classIndex < numClasses; ++classIndex) {
                 Class class = classes[classIndex];
 
-                if (class == NULL || class == [FLEXNetworkObserver class]) {
+                 if (class == NULL || class == [FLEXNetworkObserver class]) {
+                    continue;
+                }
+
+                // Check if class is safe to inspect using FLEX runtime safety helper
+                if (!FLEXClassIsSafe(class)) {
                     continue;
                 }
 
@@ -509,6 +515,15 @@ static FIRDocumentReference * _logos_method$_ungrouped$FIRCollectionReference$ad
                 // Double-check the class is still registered by looking it up by name.
                 const char *className = class_getName(class);
                 if (className == NULL || objc_lookUpClass(className) != class) {
+                    continue;
+                }
+
+                // Ensure the class inherits from NSObject or NSProxy to avoid crashes on pure Swift classes
+                Class tempClass = class;
+                while (tempClass && tempClass != [NSObject class] && tempClass != [NSProxy class]) {
+                    tempClass = class_getSuperclass(tempClass);
+                }
+                if (!tempClass) {
                     continue;
                 }
 
