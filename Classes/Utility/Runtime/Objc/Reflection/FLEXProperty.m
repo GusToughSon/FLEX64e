@@ -260,6 +260,23 @@
         BOOL classAndClassProperty = objectIsClass && self.isClassProperty;
 
         if (instanceAndInstanceProperty || classAndClassProperty) {
+            // Guard against Swift-bridged struct properties (like URL, UUID) crashing during bridging if uninitialized/zeroed
+            if (self.likelyIvarExists) {
+                Ivar ivar = class_getInstanceVariable(object_getClass(target), self.likelyIvarName.UTF8String);
+                if (ivar) {
+                    const char *ivarType = ivar_getTypeEncoding(ivar);
+                    const char *propType = self.attributes.typeEncoding.UTF8String;
+                    if (ivarType && propType && propType[0] == '@' && ivarType[0] != '@') {
+                        ptrdiff_t offset = ivar_getOffset(ivar);
+                        void *ivar_ptr = (char *)(__bridge void *)target + offset;
+                        uint64_t *val = (uint64_t *)ivar_ptr;
+                        if (*val == 0) {
+                            return nil;
+                        }
+                    }
+                }
+            }
+
             return [FLEXRuntimeUtility performSelector:self.likelyGetter onObject:target];
         }
     }
