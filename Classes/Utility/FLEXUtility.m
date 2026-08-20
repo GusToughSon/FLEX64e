@@ -484,7 +484,7 @@ BOOL FLEXConstructorsShouldRun(void) {
                                      onClass:(Class)class
                                    withBlock:(id)block
                             swizzledSelector:(SEL)swizzledSelector {
-    // This method is only intended for swizzling methods that are know to exist on the class.
+    // This method is only intended for swizzling methods that are known to exist on the class.
     // Bail if that isn't the case.
     Method originalMethod = class_getInstanceMethod(class, originalSelector);
     if (!originalMethod) {
@@ -492,9 +492,19 @@ BOOL FLEXConstructorsShouldRun(void) {
     }
     
     IMP implementation = imp_implementationWithBlock(block);
-    class_addMethod(class, swizzledSelector, implementation, method_getTypeEncoding(originalMethod));
-    Method newMethod = class_getInstanceMethod(class, swizzledSelector);
-    method_exchangeImplementations(originalMethod, newMethod);
+    const char *types = method_getTypeEncoding(originalMethod);
+    
+    if (class_addMethod(class, originalSelector, implementation, types)) {
+        // The class did not implement the method directly (it was inherited).
+        // We added our swizzled block version as the primary implementation on this class.
+        // Now add the original inherited implementation under the swizzled selector.
+        class_addMethod(class, swizzledSelector, method_getImplementation(originalMethod), types);
+    } else {
+        // The class already implements the method directly, we can safely exchange implementations.
+        class_addMethod(class, swizzledSelector, implementation, types);
+        Method newMethod = class_getInstanceMethod(class, swizzledSelector);
+        method_exchangeImplementations(originalMethod, newMethod);
+    }
 }
 
 + (void)replaceImplementationOfSelector:(SEL)selector
