@@ -1,0 +1,9 @@
+Package: com.flex.flex64e
+Name: FLEX 64e v25
+Version: 5.22.10-25
+Architecture: iphoneos-arm64
+Description: FLEX runtime introspection tool with arm64/arm64e support. Provides a floating toolbar for inspecting views, network requests, heap objects, file systems, databases, and more. Configure per-app injection in Settings. (Rootless build for Dopamine/Palera1n).
+Maintainer: GusToughSon
+Author: GusToughSon
+Section: Tweaks
+Depends: mobilesubstrate, preferenceloader

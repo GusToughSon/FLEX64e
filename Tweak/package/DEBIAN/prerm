@@ -1,0 +1,7 @@
+#!/bin/sh
+if [ -f "/var/jb/usr/bin/uicache" ]; then
+    /var/jb/usr/bin/uicache -u /var/jb/Applications/FLEX64e.app
+elif [ -f "/usr/bin/uicache" ]; then
+    /usr/bin/uicache -u /var/jb/Applications/FLEX64e.app
+fi
+exit 0

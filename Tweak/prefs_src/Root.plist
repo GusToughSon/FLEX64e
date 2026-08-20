@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Global Settings</string>
+			<key>footerText</key>
+			<string>Enable or disable FLEX globally. Changing this setting requires a respring.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.flex.flex64e</string>
+			<key>key</key>
+			<string>globalEnabled</string>
+			<key>label</key>
+			<string>Enabled</string>
+			<key>PostNotification</key>
+			<string>com.flex.flex64e/settingschanged</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Per-App Settings</string>
+			<key>footerText</key>
+			<string>Select which apps FLEX should be injected into.</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkListCell</string>
+			<key>detail</key>
+			<string>ATLApplicationListMultiSelectionController</string>
+			<key>defaults</key>
+			<string>com.flex.flex64e</string>
+			<key>key</key>
+			<string>enabledApps</string>
+			<key>label</key>
+			<string>Per-App Injection</string>
+			<key>sections</key>
+			<array>
+				<dict>
+					<key>sectionType</key>
+					<string>System</string>
+				</dict>
+				<dict>
+					<key>sectionType</key>
+					<string>User</string>
+				</dict>
+			</array>
+			<key>showIdentifiersAsSubtitle</key>
+			<true/>
+			<key>defaultApplicationSwitchValue</key>
+			<false/>
+			<key>useSearchBar</key>
+			<true/>
+			<key>PostNotification</key>
+			<string>com.flex.flex64e/settingschanged</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>FLEX 64e</string>
+</dict>
+</plist>
