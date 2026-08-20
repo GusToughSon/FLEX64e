@@ -992,9 +992,14 @@ static BOOL FLEXIsDefaultSkippedView(UIView *view) {
 #pragma mark - FLEXHierarchyDelegate
 
 - (void)viewHierarchyDidDismiss:(UIView *)selectedView {
+    UIViewController *presentedVC = self.presentedViewController;
     // Note that we need to wait until the view controller is dismissed to calculate the frame
     // of the outline view, otherwise the coordinate conversion doesn't give the correct result.
     [self toggleViewsToolWithCompletion:^{
+        if ([presentedVC isKindOfClass:[FLEXNavigationController class]]) {
+            [FLEXTabList.sharedList closeTab:(FLEXNavigationController *)presentedVC];
+        }
+        
         // If the selected view is outside of the tap point array (selected from "Full Hierarchy"),
         // then clear out the tap point array and remove all the outline views.
         if (![self.viewsAtTapPoint containsObject:selectedView]) {
