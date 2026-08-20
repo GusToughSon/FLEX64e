@@ -128,6 +128,10 @@ NSString * const FLEXRuntimeUtilityErrorDomain = @"FLEXRuntimeUtilityErrorDomain
 
 /// Never nil
 + (NSString *)safeDebugDescriptionForObject:(id)object {
+    if ([object isKindOfClass:[NSAttributedString class]]) {
+        return [object string];
+    }
+
     NSString *description = nil;
 
     if ([self safeObject:object respondsToSelector:@selector(debugDescription)]) {
