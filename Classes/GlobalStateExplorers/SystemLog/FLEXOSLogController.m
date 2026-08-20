@@ -175,6 +175,11 @@ static uint8_t (*OSLogGetType)(void *);
             // move messageText from stack to heap
             NSString *msg = [NSString stringWithUTF8String:messageText];
 
+            // Fallback to format string if composition fails (common on newer iOS versions)
+            if (([msg containsString:@"compose failure"] || msg.length == 0) && log_message->format) {
+                msg = [NSString stringWithUTF8String:log_message->format];
+            }
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 FLEXSystemLogMessage *message = [FLEXSystemLogMessage logMessageFromDate:date text:msg];
                 if (self.persistent) {
